@@ -2,9 +2,10 @@ Module.register('MMM-crypto-portfolio', {
     result: {},
     defaults: {
          
-        currency: [{name:'ripple',   portf:251.688014},
-          {name:'litecoin', portf: 0.0382885},
-          {name:'ethereum', portf:0}],
+        currency: [{name:'bitcoin',         portf: 2},
+                   {name:'ripple',          portf: 1.688014},
+                   {name:'litecoin',        portf: 0.382885},
+                   {name:'ethereum',        portf: 3.771212}],
         conversion: 'EUR',
         showUSD: false,
         showPortfolio: true,
@@ -159,7 +160,7 @@ Module.register('MMM-crypto-portfolio', {
 
     scheduleUpdate: function() {
         var self = this
-            // Refresh time should not be less than 5 minutes
+        // Refresh time should not be less than 5 minutes
         var delay = 300000
         setInterval(function() {
             self.getTicker()
@@ -183,17 +184,17 @@ Module.register('MMM-crypto-portfolio', {
             this.translate('CURRENCY'),
             this.translate('PRICE')
         ]
-        if (this.config.showAssets){tableHeaderValues.push('Assets')}
-        if (this.config.showPortfolio){tableHeaderValues.push('Portfolio')}
+        if (this.config.showAssets){tableHeaderValues.push(this.translate('ASSETS'))}
+        if (this.config.showPortfolio){tableHeaderValues.push(this.translate('PORTFOLIO'))}
         
         if (this.config.headers.indexOf('change1h') > -1) {
-            tableHeaderValues.push(this.translate('CHANGE') + ' (1h)')
+            tableHeaderValues.push(this.translate('CHANGE') + ' '+this.translate('ONEHOUR'))
         }
         if (this.config.headers.indexOf('change24h') > -1) {
-            tableHeaderValues.push(this.translate('CHANGE') + ' (24h)')
+            tableHeaderValues.push(this.translate('CHANGE') +  ' '+this.translate('ONEDAY'))
         }
         if (this.config.headers.indexOf('change7d') > -1) {
-            tableHeaderValues.push(this.translate('CHANGE') + ' (7d)')
+            tableHeaderValues.push(this.translate('CHANGE') +  ' '+this.translate('ONEWEEK'))
         }
         for (var i = 0; i < tableHeaderValues.length; i++) {
             var tableHeadSetup = document.createElement('th')
@@ -260,7 +261,7 @@ Module.register('MMM-crypto-portfolio', {
             trWrapper.className = 'currency'
             var tdWrapper = document.createElement('td')
             tdWrapper.style.textAlign="left";
-            tdWrapper.innerHTML = "Total";
+            tdWrapper.innerHTML = this.translate('TOTAL');
             tdWrapper.colSpan=2;
             trWrapper.appendChild(tdWrapper)
             wrapper.appendChild(trWrapper)
@@ -275,7 +276,7 @@ Module.register('MMM-crypto-portfolio', {
         
         
         var tableCaption = document.createElement('caption');
-        tableCaption.innerHTML = "Total market cap: " + marketCapMyWallet;
+        tableCaption.innerHTML = this.translate('MARKCAP')+": € " + this.formatMoney(marketCapMyWallet,0,',','.');
         wrapper.appendChild(tableCaption);
         return wrapper
     },
@@ -496,8 +497,18 @@ Module.register('MMM-crypto-portfolio', {
         return {
             en: 'translations/en.json',
             de: 'translations/de.json',
-            it: 'translations/it.json'
+            it: 'translations/it.json',
+            nl: 'translations/nl.json'
         }
     },
+    formatMoney: function(n,c, d, t){
+        c = isNaN(c = Math.abs(c)) ? 2 : c, 
+        d = d == undefined ? "." : d, 
+        t = t == undefined ? "," : t, 
+        s = n < 0 ? "-" : "", 
+        i = String(parseInt(n = Math.abs(Number(n) || 0).toFixed(c))), 
+        j = (j = i.length) > 3 ? j % 3 : 0;
+        return s + (j ? i.substr(0, j) + t : "") + i.substr(j).replace(/(\d{3})(?=\d)/g, "$1" + t) + (c ? d + Math.abs(n - i).toFixed(c).slice(2) : "");
+    }
 
 })

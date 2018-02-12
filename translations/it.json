@@ -3,5 +3,12 @@
   "PRICE": "Prezzo",
   "IMAGE": "Image",
   "NOTFOUND": "not found in",
-  "CHANGE": "% differenza"
+  "CHANGE": "% differenza",
+  "TOTAL": "Total",
+  "MARKCAP":"Total market cap",
+  "ONEHOUR":"1 hour",
+  "ONEDAY": "1 day ",
+  "ONEWEEK": "1 week",
+  "ASSETS": "Assets",
+  "PORTFOLIO":"Portfolio"
 }
