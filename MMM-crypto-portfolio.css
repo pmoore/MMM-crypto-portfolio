@@ -1,0 +1,36 @@
+.currency {
+    color: white;
+}
+
+.MMM-crypto-portfolio > tr {
+    padding-bottom: 8px;
+}
+
+.MMM-crypto-portfolio > tr > td, .MMM-crypto-portfolio > tr > th {
+    padding-left: 4px;
+    padding-bottom: 5px;
+}
+
+.MMM-crypto-portfolio-icon > tr > td > img, span{
+    vertical-align: middle;
+}
+.MMM-crypto-portfolio-icon > tr > td {
+    padding-bottom: 10px;
+    text-align: right;
+}
+.MMM-crypto-portfolio tr.header-row th {
+    border-bottom: 1px solid #666;
+    padding-bottom: 5px;
+    margin-bottom: 10px;
+}
+.MMM-crypto-portfolio *:first-child {
+    padding-left: 0;
+}
+.MMM-crypto-portfolio-icon .icon-field {
+    padding-right: 10px;
+}
+
+.MMM-crypto-portfolio-icon > tr > td.graph > img {
+    padding-left: 10px;
+    filter: invert(1) grayscale(100%) brightness(500%);
+}

@@ -1,8 +1,11 @@
-# MMM-cryptocurrency
+# MMM-crypto-portfolio
 A <a href="https://github.com/MichMich/MagicMirror">MagicMirror</a> module used to get real-time values of crypto currencies.
 
+This module is orginally made By Matteo Danelli, many thanks for his great work.
+I have adapted it to show the portfolio and assets.
+
 ## Installation
-1. Navigate into your MagicMirror's `modules` folder and execute `git clone https://github.com/matteodanelli/MMM-cryptocurrency.git`.
+1. Navigate into your MagicMirror's `modules` folder and execute `git clone https://github.com/spoturdeal/MMM-crypto-portfolio.git`.
 2. Add the module inside `config.js` placing it where you prefer ;)
 
 
@@ -30,11 +33,17 @@ Here is an example of an entry in `config.js`
 	module: "MMM-cryptocurrency",
 	position: "top_right",
 	config: {
-		currency: ['ethereum', 'bitcoin'],
+		           // enter currency as pairs (name is the coin and portf how much you own)
+		currency: [{name: 'bitcoin',  portf:  1.0101010},
+		           {name: 'ripple',   portf: 21.688014},
+                   {name: 'litecoin', portf: 1.1382885},
+                   {name: 'ethereum', portf: 0}],
 		conversion: 'EUR',
+		showPortfolio: true,    // only used in detail view
+        showAssets: true,       // only used in detail view
 		showUSD: false,
 		headers: ['change24h', 'change1h', 'change7d'],
-		displayType: 'logoWithChanges',
+		displayType: 'detail',   //'logoWithChanges',
 		showGraphs: true
 	}
 }
@@ -101,12 +110,12 @@ It's my first module here after that I built a MagicMirror. I'm so proud of it a
 ## Contributors
 <a href="https://github.com/Klizzy/MMM-cryptocurrency">Klizzy</a> for translations and multiple currencies.
 <a href="https://github.com/olexs/MMM-cryptocurrency">olexs</a> for currencies graphs and significant digits.
-
+<a href="https://github.com/mateodanelli/MMM-cryptocurrency>Mateo</a> For the fantastic base of this module.
 
 The MIT License (MIT)
 =====================
 
-Copyright © 2017 Matteo Danelli
+Copyright © 2018 SpoturDeal - Carl 
 
 Permission is hereby granted, free of charge, to any person
 obtaining a copy of this software and associated documentation
