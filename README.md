@@ -89,15 +89,13 @@ Feel free to ask for support of your favorite currency. Else, just implement it 
 ## Notes
 Data provided by <a href="https://coinmarketcap.com/">coinmarketcap.com</a>.
 - Endpoints update every 5 minutes.
-- Currently you can only display currencies listed within top-25 on coinmarketcap.com.
-- `significantDigits` only has a visible effect when set to 4 or more. It is useful for showing low-value coins (such as Ripple) at a higher resolution, rounding to more digits after the decimal point than the minimal 2. Rounding always keeps at least two digits after the decimal.
 
 ## Contributors
 <a href="https://github.com/Klizzy/MMM-cryptocurrency">Klizzy</a> for translations and multiple currencies.
 
 <a href="https://github.com/olexs/MMM-cryptocurrency">olexs</a> for currencies graphs and significant digits.
 
-<a href="https://github.com/mateodanelli/MMM-cryptocurrency">Mateo</a> For the fantastic base of this module.
+<a href="https://github.com/mateodanelli/MMM-cryptocurrency">Mateo</a> For the fantastic base of this module. Check his module for extra config information.
 
 <a href="https://fontawesome.com/v4.7.0/icons/">Fontawesome</a> Providing great graphical fonts.
 
