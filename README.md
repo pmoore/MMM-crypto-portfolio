@@ -41,6 +41,7 @@ Here is an example of an entry in `config.js`
 		conversion: 'EUR',
 		showPortfolio: true,    // only used in detail view
                 showAssets: true,       // only used in detail view
+		showAgainstBTC: true,   // only used in detail view
 		showUSD: false,
 		fontSize: 'small',
 		headers: ['change24h', 'change1h', 'change7d'],
