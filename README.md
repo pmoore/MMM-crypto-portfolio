@@ -58,26 +58,8 @@ Here is an example of an entry in `config.js`
 #### Display type: details
 ![Screenshot of detail mode](/logowithassets.png?raw=true "Included assets")
 
-#### Display type: details
-![Screenshot of detail mode](/MMM-crypto-portfolio.png?raw=true "Example screenshot")
-
-#### Display type: logo
-![Screenshot with logo](/logoView.png?raw=true "displayType: 'logo'")
-
-#### Display type: logoWithChanges
-![Screenshot with logo and Changes](/logoWithChangesView.png?raw=true "displayType: 'logoWithChanges'")
-
-#### Display type: logo + significantDigits=5
-![Screenshot with logo and 5 significant digits](/logoViewWithSignificantDigits.png?raw=true "displayType: 'logo', significantDigits: 5")
-
-#### Display type: logo + showGraphs
-![Screenshot with logo and graphs](/logoViewWithGraphs.png?raw=true "displayType: 'logo', showGraphs: 'true'")
-
 #### Display type: logoWithChanges + showGraphs
 ![Screenshot with logo changes and graphs](/logoWithChangesAndGraphView.png?raw=true "displayType: 'logoWithChanges', showGraphs: 'true'")
-
-#### Display type: logo + coloredLogos + showGraphs
-![Screenshot with logo](/logoColoredGraph.png?raw=true "displayType: 'logo', showGraphs: 'true', coloredLogos: true")
 
 ## Cryptocurrency Logo
 
@@ -110,15 +92,14 @@ Data provided by <a href="https://coinmarketcap.com/">coinmarketcap.com</a>.
 - Currently you can only display currencies listed within top-25 on coinmarketcap.com.
 - `significantDigits` only has a visible effect when set to 4 or more. It is useful for showing low-value coins (such as Ripple) at a higher resolution, rounding to more digits after the decimal point than the minimal 2. Rounding always keeps at least two digits after the decimal.
 
-## Feedback
-It's my first module here after that I built a MagicMirror. I'm so proud of it and I have found a lot of interesting modules, including one similar to this, based on Bitcoin only <a href="https://github.com/valmassoi/MMM-bitcoin">MMM-bitcoin</a>.
-<br>I am open to work on this project and to expand it to add other interesting features, and a bit of cool style too.
-<br>Leave me some feedback in the forum. Thank you!
-
 ## Contributors
 <a href="https://github.com/Klizzy/MMM-cryptocurrency">Klizzy</a> for translations and multiple currencies.
+
 <a href="https://github.com/olexs/MMM-cryptocurrency">olexs</a> for currencies graphs and significant digits.
+
 <a href="https://github.com/mateodanelli/MMM-cryptocurrency">Mateo</a> For the fantastic base of this module.
+
+<a href="https://fontawesome.com/v4.7.0/icons/">Fontawesome</a> Providing great graphical fonts.
 
 The MIT License (MIT)
 =====================
