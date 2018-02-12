@@ -52,6 +52,9 @@ Here is an example of an entry in `config.js`
 
 ## Screenshots
 #### Display type: details
+![Screenshot of detail mode](/logowithassets.png?raw=true "Included assets")
+
+#### Display type: details
 ![Screenshot of detail mode](/MMM-crypto-portfolio.png?raw=true "Example screenshot")
 
 #### Display type: logo
