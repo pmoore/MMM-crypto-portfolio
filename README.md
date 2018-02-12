@@ -32,16 +32,17 @@ Here is an example of an entry in `config.js`
 {
 	module: "MMM-cryptocurrency",
 	position: "top_right",
-	config: {
+	config: {          // this is changed from Mateo`s Version
 		           // enter currency as pairs (name is the coin and portf how much you own)
 		currency: [{name: 'bitcoin',  portf:  1.0101010},
 		           {name: 'ripple',   portf: 21.688014},
-                   {name: 'litecoin', portf: 1.1382885},
-                   {name: 'ethereum', portf: 0}],
+                           {name: 'litecoin', portf: 1.1382885},
+                           {name: 'ethereum', portf: 0}],
 		conversion: 'EUR',
 		showPortfolio: true,    // only used in detail view
-        showAssets: true,       // only used in detail view
+                showAssets: true,       // only used in detail view
 		showUSD: false,
+		fontSize: 'small',
 		headers: ['change24h', 'change1h', 'change7d'],
 		displayType: 'detail',   //'logoWithChanges',
 		showGraphs: true
@@ -51,7 +52,7 @@ Here is an example of an entry in `config.js`
 
 ## Screenshots
 #### Display type: details
-![Screenshot of detail mode](/MMM-cryptocurrency.png?raw=true "Example screenshot")
+![Screenshot of detail mode](/MMM-crypto-portfolio.png?raw=true "Example screenshot")
 
 #### Display type: logo
 ![Screenshot with logo](/logoView.png?raw=true "displayType: 'logo'")
