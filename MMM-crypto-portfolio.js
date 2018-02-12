@@ -10,6 +10,7 @@ Module.register('MMM-crypto-portfolio', {
         showUSD: false,
         showPortfolio: true,
         showAssets: true,
+        showAgainstBTC:true,
         displayLongNames: false,
         headers: [],
         displayType: 'detail',
@@ -149,7 +150,8 @@ Module.register('MMM-crypto-portfolio', {
     },
 
     getStyles: function() {
-        return ['MMM-crypto-portfolio.css']
+        return ['MMM-crypto-portfolio.css',
+                'https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css']
     },
 
     getTicker: function() {
@@ -184,6 +186,7 @@ Module.register('MMM-crypto-portfolio', {
             this.translate('CURRENCY'),
             this.translate('PRICE')
         ]
+        if (this.config.showAgainstBTC){tableHeaderValues.push('BTC')}
         if (this.config.showAssets){tableHeaderValues.push(this.translate('ASSETS'))}
         if (this.config.showPortfolio){tableHeaderValues.push(this.translate('PORTFOLIO'))}
         
@@ -225,6 +228,9 @@ Module.register('MMM-crypto-portfolio', {
                 name,
                 currentCurrency.price
             ]
+            if (this.config.showAgainstBTC){
+                tdValues.push('<i class="fa fa-bitcoin"></i> '+currentCurrency.price_btc)
+            }
             if (this.config.showAssets) {
                 tdValues.push(myWallet);
             }
@@ -262,7 +268,7 @@ Module.register('MMM-crypto-portfolio', {
             var tdWrapper = document.createElement('td')
             tdWrapper.style.textAlign="left";
             tdWrapper.innerHTML = this.translate('TOTAL');
-            tdWrapper.colSpan=2;
+            tdWrapper.colSpan=(this.config.showAgainstBTC?3:2);
             trWrapper.appendChild(tdWrapper)
             wrapper.appendChild(trWrapper)
 
@@ -384,7 +390,7 @@ Module.register('MMM-crypto-portfolio', {
 
             var logoWrapper = document.createElement('td')
             logoWrapper.className = 'icon-field'
-
+//logoWrapper.colSpan=5;            
             if (this.imageExists(apiResult[j].id)) {
                 var logo = new Image()
 
@@ -445,6 +451,7 @@ Module.register('MMM-crypto-portfolio', {
 
             if (this.config.showGraphs) {
                 var graphWrapper = document.createElement('td')
+                
                 graphWrapper.className = 'graph'
                 if (this.sparklineIds[apiResult[j].id]) {
                     var graph = document.createElement('img')
