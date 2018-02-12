@@ -56,7 +56,7 @@ Here is an example of an entry in `config.js`
 
 ## Screenshots
 #### Display type: details
-![Screenshot of detail mode](/logoAgainstBTC.png?raw=true "Included assets")
+![Screenshot of detail mode](/LogoAgainstBTC.png?raw=true "Included assets")
 
 #### Display type: details 
 ![Screenshot of detail mode](/logowithassets.png?raw=true "Included assets")
