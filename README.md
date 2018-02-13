@@ -22,6 +22,7 @@ I have adapted it to show the portfolio and assets.
 |`showAssets`| Shows the value of your portfolio. <br>**Type:** `boolean`<br>**Options:** true, false<br/>**Default:** <i>true</i>
 |`showPortfolio`| Show the amount of the coin in your wallet. <br>**Type:** `boolean`<br>**Options:** true, false<br/>**Default:** <i>false</i>
 |`showAgainstBTC`| Show the BTC value of the coin. <br>**Type:** `boolean`<br>**Options:** true,false<br/>**Default:** <i>true</i>
+|`showTotalMarketCap`| Show the total market cap only in US$. <br>**Type:** `boolean`<br>**Options:** true,false<br/>**Default:** <i>false</i>
 |`logoHeaderText`| Defines the headline text if `displayType: logo` is set.<br/>**Type:** `string`<br>**Default:** <i>Crypto currency</i>
 |`headers`| Possibility to show currency change in the last hour, day or week. <br> **Type** One of the following: `change1h, change24h, change7d` <br> **Default** <i>None. All optionals.</i> |
 |`significantDigits`|Total digits to use for rounding the price (including before and after decimal point).<br> **Type** `number` <br> **Default** <i>2</i> |
@@ -42,9 +43,10 @@ Here is an example of an entry in `config.js`
                            {name: 'litecoin', portf: 1.1382885},
                            {name: 'ethereum', portf: 0}],
 		conversion: 'EUR',
-		showPortfolio: true,    // only used in detail view
-                showAssets: true,       // only used in detail view
-		showAgainstBTC: true,   // only used in detail view
+		showPortfolio: true,    
+                showAssets: true,       
+		showAgainstBTC: true,     // only used in detail view
+		showTotalMarketCap: true, // only used in detail view
 		showUSD: false,
 		fontSize: 'small',
 		headers: ['change24h', 'change1h', 'change7d'],
