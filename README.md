@@ -62,7 +62,7 @@ Here is an example of an entry in `config.js`
 ![Screenshot of detail mode](/logowithassets.png?raw=true "Included assets")
 
 #### Display type: logoWithChanges + showGraphs
-![Screenshot with logo changes and graphs](/logoWithChangesAndGraphView.png?raw=true "displayType: 'logoWithChanges', showGraphs: 'true'")
+![Screenshot with logo changes and graphs](/logoNewDetail.png?raw=true "displayType: 'logoWithChanges', showGraphs: 'true'")
 
 ## Cryptocurrency Logo
 
