@@ -10,6 +10,7 @@ Module.register('MMM-crypto-portfolio', {
         showPortfolio: true,
         showAssets: true,
         showAgainstBTC:true,
+        showTotalMarketCap: false,
         displayLongNames: false,
         headers: [],
         displayType: 'detail',
@@ -158,6 +159,12 @@ Module.register('MMM-crypto-portfolio', {
         var url = 'https://api.coinmarketcap.com/v1/ticker/?convert=' + conversion + '&limit=' + this.config.limit
         this.sendSocketNotification('READ_COINS', url)
     },
+    getCap:  function() {
+        if (this.config.showTotalMarketCap){
+           var url  = 'https://api.coinmarketcap.com/v1/global/';
+           this.sendSocketNotification('READ_MARKET_CAP',url)
+        }
+    },
 
     scheduleUpdate: function() {
         var self = this
@@ -290,6 +297,16 @@ Module.register('MMM-crypto-portfolio', {
         var tableCaption = document.createElement('caption');
         tableCaption.innerHTML = this.translate('MARKCAP')+ " (" + n.substr(0,5)+"): " + this.localCurrencyFormat(marketCapMyWallet)
         wrapper.appendChild(tableCaption);
+        // only needed if show market cap true
+        if (this.config.showTotalMarketCap){
+           var trCap=document.createElement('tr');
+           var tdCap= document.createElement('td');
+           tdCap.colSpan ="4";
+           tdCap.id = 'market_cap';
+           tdCap.className = 'small thin';
+           trCap.appendChild(tdCap)
+           wrapper.appendChild(trCap);
+        }
         return wrapper
     },
 
@@ -297,7 +314,12 @@ Module.register('MMM-crypto-portfolio', {
         if (notification === 'COINS_DATA') {
             this.result = this.getWantedCurrencies(this.config.currency, payload)
             this.updateDom()
+            this.getCap() 
+
+        } else if (notification ==='MARKET_CAP_DATA'){
+            document.getElementById('market_cap').innerHTML="Total market cap: " + payload.total_market_cap_usd.toLocaleString('en-US', { style: 'currency', currency: 'USD' });
         }
+        
     },
     /**
      * Returns configured currencies
