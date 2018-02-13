@@ -1,11 +1,10 @@
 Module.register('MMM-crypto-portfolio', {
     result: {},
     defaults: {
-         
-        currency: [{name:'bitcoin',         portf: 2},
-                   {name:'ripple',          portf: 1.688014},
-                   {name:'litecoin',        portf: 0.382885},
-                   {name:'ethereum',        portf: 3.771212}],
+        currency: [{name:'bitcoin',   portf: 1.2345678},
+                   {name:'ripple',    portf: 1.688014},
+                   {name:'litecoin',  portf: 0.382885},
+                   {name:'ethereum',  portf: 3.771212}],
         conversion: 'EUR',
         showUSD: false,
         showPortfolio: true,
@@ -21,7 +20,7 @@ Module.register('MMM-crypto-portfolio', {
         fontSize: 'small',
         limit: '200'
     },
-
+    // Sparklines are the graphics
     sparklineIds: {
         bitcoin: 1,
         ethereum: 1027,
@@ -175,21 +174,22 @@ Module.register('MMM-crypto-portfolio', {
             return this.buildIconView(this.result, this.config.displayType)
         }
         var data = this.result
-
+        // set the table wrapper where the data is build
         var wrapper = document.createElement('table')
         wrapper.className = 'small MMM-crypto-portfolio'
-
+        // set tr for header
         var tableHeader = document.createElement('tr')
         tableHeader.className = 'header-row'
-
+        // This we build array for the column headers
         var tableHeaderValues = [
             this.translate('CURRENCY'),
             this.translate('PRICE')
         ]
+        // extra selected column headers are pushed to array here
         if (this.config.showAgainstBTC){tableHeaderValues.push('BTC')}
         if (this.config.showAssets){tableHeaderValues.push(this.translate('ASSETS'))}
         if (this.config.showPortfolio){tableHeaderValues.push(this.translate('PORTFOLIO'))}
-        
+        // see what item from this.config.headers[] are needed  (-1 means is not in array)
         if (this.config.headers.indexOf('change1h') > -1) {
             tableHeaderValues.push(this.translate('CHANGE') + ' '+this.translate('ONEHOUR'))
         }
@@ -199,6 +199,7 @@ Module.register('MMM-crypto-portfolio', {
         if (this.config.headers.indexOf('change7d') > -1) {
             tableHeaderValues.push(this.translate('CHANGE') +  ' '+this.translate('ONEWEEK'))
         }
+        // Create the th and add for each array value
         for (var i = 0; i < tableHeaderValues.length; i++) {
             var tableHeadSetup = document.createElement('th')
             tableHeadSetup.innerHTML = tableHeaderValues[i]
@@ -206,6 +207,7 @@ Module.register('MMM-crypto-portfolio', {
         }
         tableHeader.style.textAlign="right";
         wrapper.appendChild(tableHeader)
+        // Set the total counter to 0
         var marketCapMyWallet = 0;
         var myTotalAsset = 0;
         for (i = 0; i < data.length; i++) {
@@ -218,21 +220,23 @@ Module.register('MMM-crypto-portfolio', {
             } else {
                 name = currentCurrency.symbol
             }
+            // calc tot marketcap of the wallet
             marketCapMyWallet += parseFloat(currentCurrency.market_cap_eur);
-            //var cPrice= currentCurrency.price.replace("€", "").trim();
-            //cPrice= parseFloat(cPrice.replace(",","."));
+            // calc the tottal value of all assets
             myTotalAsset += currentCurrency.clean_price * this.config.currency[i].portf
-            var myWallet = '€ '+(this.config.currency[i].portf * currentCurrency.clean_price ).toFixed(2);
-            
+            // calc the value of the wallet for one coin
+            var myWallet = (this.config.currency[i].portf * currentCurrency.clean_price );
+            // build array with values needed in table
             var tdValues = [
                 name,
                 currentCurrency.price
             ]
+            // add the optional values to the array
             if (this.config.showAgainstBTC){
                 tdValues.push('<i class="fa fa-bitcoin"></i> '+currentCurrency.price_btc)
             }
             if (this.config.showAssets) {
-                tdValues.push(myWallet);
+                tdValues.push(this.localCurrencyFormat(myWallet));
             }
             if (this.config.showPortfolio){
                 tdValues.push(''+this.config.currency[i].portf )
@@ -247,7 +251,7 @@ Module.register('MMM-crypto-portfolio', {
             if (this.config.headers.indexOf('change7d') > -1) {
                 tdValues.push(currentCurrency.percent_change_7d + '%')
             }
-
+            // build the td for the data in the array fill table
             for (var j = 0; j < tdValues.length; j++) {
                 var tdWrapper = document.createElement('td')
                 let currValue = tdValues[j]
@@ -261,6 +265,7 @@ Module.register('MMM-crypto-portfolio', {
             }
             wrapper.appendChild(trWrapper)
         }
+        // if show Assets is true in config it makes sense to show the total
         if (this.config.showAssets){
             // add tr for totals 
             var trWrapper = document.createElement('tr')
@@ -274,29 +279,26 @@ Module.register('MMM-crypto-portfolio', {
 
             var tdWrapper = document.createElement('td')
             tdWrapper.style.textAlign="right";
-            tdWrapper.innerHTML = "€ " + myTotalAsset.toFixed(2)
+            tdWrapper.innerHTML = this.localCurrencyFormat(myTotalAsset);
             trWrapper.appendChild(tdWrapper)
             wrapper.appendChild(trWrapper)
         
         }
         var d = new Date();
         var n = d.toLocaleTimeString();
-        
+        // add the total market cap of the selected coins on top of table
         var tableCaption = document.createElement('caption');
-        tableCaption.innerHTML = this.translate('MARKCAP')+ " (" + n.substr(0,5)+")"+": € " + this.formatMoney(marketCapMyWallet,0,',','.');
+        tableCaption.innerHTML = this.translate('MARKCAP')+ " (" + n.substr(0,5)+"): " + this.localCurrencyFormat(marketCapMyWallet)
         wrapper.appendChild(tableCaption);
         return wrapper
     },
 
     socketNotificationReceived: function(notification, payload) {
         if (notification === 'COINS_DATA') {
-            
-            //info.log(this.config.currency[0].name)
             this.result = this.getWantedCurrencies(this.config.currency, payload)
             this.updateDom()
         }
     },
-
     /**
      * Returns configured currencies
      *
@@ -339,6 +341,7 @@ Module.register('MMM-crypto-portfolio', {
 
         // add the currency string
         apiResult['price'] = price.toLocaleString(config.language, { style: 'currency', currency: this.config.conversion })
+        // clean prices are needed to make assets calculations
         apiResult['clean_price']=unroundedPrice;
         if (rightCurrencyFormat != 'usd' && this.config.showUSD) {
             // rounding the priceUSD
@@ -346,13 +349,13 @@ Module.register('MMM-crypto-portfolio', {
             var digitsBeforeDecimalPointUSD = Math.floor(unroundedPriceUSD).toString().length
             var requiredDigitsAfterDecimalPointUSD = Math.max(this.config.significantDigits - digitsBeforeDecimalPointUSD, 2)
             var priceUSD = this.roundNumber(unroundedPriceUSD, requiredDigitsAfterDecimalPointUSD)
+            // clean prices are needed to make assets calculations
             apiResult['clean_price_usd'] = unroundedPriceUSD;
             apiResult['price'] += ' / ' + priceUSD.toLocaleString(config.language, { style: 'currency', currency: 'USD' })
         }
 
         return apiResult
     },
-
     /**
      * Rounds a number to a given number of digits after the decimal point
      *
@@ -366,7 +369,6 @@ Module.register('MMM-crypto-portfolio', {
         var roundedTempNumber = Math.round(tempNumber)
         return roundedTempNumber / factor
     },
-
     /**
      * Creates the icon view type
      *
@@ -375,23 +377,26 @@ Module.register('MMM-crypto-portfolio', {
      * @returns {Element}
      */
     buildIconView: function(apiResult, displayType) {
+
         var wrapper = document.createElement('div')
+        // make header
         var header = document.createElement('header')
         header.className = 'module-header'
         header.innerHTML = this.config.logoHeaderText
+        //only add header if there is a logoHeaderText
         if (this.config.logoHeaderText !== '') {
             wrapper.appendChild(header)
         }
-
+        // make the table for the icon view
         var table = document.createElement('table')
         table.className = 'medium MMM-crypto-portfolio-icon'
         var myTotalAsset = 0;
-        
+        // use the selected coins
         for (var j = 0; j < apiResult.length; j++) {
-
+            //make row for table the table top row consists of td[1] icon, td[2] amounts in table, td[3]Sprkline graphic 
             var tr = document.createElement('tr')
             tr.className = 'icon-row'
-
+            // td icon
             var tdLogoWrapper = document.createElement('td')
             tdLogoWrapper.className = 'icon-field'
             if (this.imageExists(apiResult[j].id)) {
@@ -409,19 +414,19 @@ Module.register('MMM-crypto-portfolio', {
                 })
             }
             var tdPriceWrapper = document.createElement('td');
-            //tdPriceWrapper.textAlign="right";
-            //tdPriceWrapper.style.fontSize = this.config.fontSize;
+            // ts table amount
             tdPriceWrapper.className='icon-col'
-            var valuesText='<table><tr style="line-height:10px;"><td class="pricedetail">' + this.translate('PRICE') + '</td><td class="pricedetail">'+apiResult[j].price.replace("EUR", "€")+"</td></tr>";
-            //cPrice= apiResult[j].price.replace("€", "");
-            //cPrice= cPrice.replace(",",".");
+            var valuesText='<table><tr style="line-height:10px;"><td class="pricedetail">' + this.translate('PRICE') + '</td><td class="pricedetail">' + this.localCurrencyFormat(apiResult[j].price) + "</td></tr>";
+            // there is no clean_price conversion here so use the price_ + conversion
             cPrice = apiResult[j]['price_' + this.config.conversion.toLowerCase()];
+            // calculatie totals
             myTotalAsset += this.config.currency[j].portf * cPrice; 
-            var myWallet=(this.config.currency[j].portf * cPrice).toFixed(2);
+            var myWallet=(this.config.currency[j].portf * cPrice);
             var portfolio = this.config.currency[j].portf;
             var againstBTC = apiResult[j].price_btc;
+            //fill the table with the amounts
             if (this.config.showAssets){
-               valuesText += '<tr style="line-height:12px;"><td class="pricedetail">' + this.translate('ASSETS') + '</td><td class="pricedetail">€ ' + myWallet + "</td></tr>";
+               valuesText += '<tr style="line-height:12px;"><td class="pricedetail">' + this.translate('ASSETS') + '</td><td class="pricedetail">' + this.localCurrencyFormat(myWallet) + "</td></tr>";
             }
             if (this.config.showPortfolio){
                valuesText += '<tr style="line-height:12px;"><td class="pricedetail">' + this.translate('PORTFOLIO') + '</td><td class="pricedetail">' + portfolio +"<td></tr>";
@@ -438,31 +443,28 @@ Module.register('MMM-crypto-portfolio', {
                valuesText += '<tr style="line-height:12px;"><td class="pricedetail">' + this.translate('CHANGE') + ' '+this.translate('ONEWEEK') + '</td><td class="pricedetail clr'+clr+'">' + apiResult[j].percent_change_7d + '%<td></tr>';
             
             }
+            // close td[2] table amounts
             valuesText+="</table>";
             tdPriceWrapper.innerHTML = valuesText;
             tdPriceWrapper.className='icon-row';
             tr.appendChild(tdLogoWrapper);
             tr.appendChild(tdPriceWrapper);
-            
+            // td[3] graphics
             if (this.config.showGraphs) {
                 var tdGraphWrapper = document.createElement('td')
                 tdGraphWrapper.className = 'graph'
                 if (this.sparklineIds[apiResult[j].id]) {
                     var graph = document.createElement('img')
                     graph.src = 'https://files.coinmarketcap.com/generated/sparklines/' + this.sparklineIds[apiResult[j].id] + '.png?cachePrevention=' + Math.random()
-                    
                     graph.style.maxWidth="150px";
-                    //graph.style.padding="0px";
                     tdGraphWrapper.appendChild(graph)
                 }
                 tr.appendChild(tdGraphWrapper)
             }
             table.appendChild(tr);
-            
-            
-
-            
         }
+        // use the total value of the assets as set in config
+        if (this.config.showAssets){
             var tr = document.createElement('tr');
             var tdTotal = document.createElement('td');
             tdTotal.className="pricedetail";            
@@ -470,19 +472,14 @@ Module.register('MMM-crypto-portfolio', {
             tr.appendChild(tdTotal);
             var tdTotal = document.createElement('td');
             tdTotal.className="pricedetail";            
-            tdTotal.innerHTML= '€ ' + myTotalAsset.toFixed(2);
+            tdTotal.innerHTML= this.localCurrencyFormat(myTotalAsset);
             tdTotal.style.textAlign="right";
             tr.appendChild(tdTotal);
             table.appendChild(tr);        
-        
-        
-        
+        }
         wrapper.appendChild(table)
-
         return wrapper
-
     },
-
     /**
      * Checks if an image with the passed name exists
      *
@@ -496,9 +493,7 @@ Module.register('MMM-crypto-portfolio', {
         http.send()
         return http.status != 404
     },
-
     colorizeChange: function(change) {
-
         if (change < 0) {
             return 'red'
         } else if (change > 0) {
@@ -507,7 +502,6 @@ Module.register('MMM-crypto-portfolio', {
             return 'white'
         }
     },
-
     /**
      * Load translations files
      * @returns {{en: string, de: string, it: string}}
@@ -528,6 +522,12 @@ Module.register('MMM-crypto-portfolio', {
         i = String(parseInt(n = Math.abs(Number(n) || 0).toFixed(c))), 
         j = (j = i.length) > 3 ? j % 3 : 0;
         return s + (j ? i.substr(0, j) + t : "") + i.substr(j).replace(/(\d{3})(?=\d)/g, "$1" + t) + (c ? d + Math.abs(n - i).toFixed(c).slice(2) : "");
+    },
+    /**
+     * Uses the local setting from Pi to set  locale format
+     */
+    localCurrencyFormat: function (amount){
+        return amount.toLocaleString(config.language, { style: 'currency', currency: this.config.conversion })
     }
 
 })
