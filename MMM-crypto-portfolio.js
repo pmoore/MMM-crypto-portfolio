@@ -19,7 +19,7 @@ Module.register('MMM-crypto-portfolio', {
         significantDigits: 2,
         coloredLogos: false,
         fontSize: 'small',
-        limit: '50'
+        limit: '200'
     },
 
     sparklineIds: {
@@ -219,10 +219,10 @@ Module.register('MMM-crypto-portfolio', {
                 name = currentCurrency.symbol
             }
             marketCapMyWallet += parseFloat(currentCurrency.market_cap_eur);
-            var cPrice= currentCurrency.price.replace("€", "").trim();
-            cPrice= parseFloat(cPrice.replace(",","."));
-            myTotalAsset += cPrice * this.config.currency[i].portf
-            var myWallet='€ '+(this.config.currency[i].portf * cPrice ).toFixed(2);
+            //var cPrice= currentCurrency.price.replace("€", "").trim();
+            //cPrice= parseFloat(cPrice.replace(",","."));
+            myTotalAsset += currentCurrency.clean_price * this.config.currency[i].portf
+            var myWallet = '€ '+(this.config.currency[i].portf * currentCurrency.clean_price ).toFixed(2);
             
             var tdValues = [
                 name,
@@ -279,10 +279,11 @@ Module.register('MMM-crypto-portfolio', {
             wrapper.appendChild(trWrapper)
         
         }
-        
+        var d = new Date();
+        var n = d.toLocaleTimeString();
         
         var tableCaption = document.createElement('caption');
-        tableCaption.innerHTML = this.translate('MARKCAP')+": € " + this.formatMoney(marketCapMyWallet,0,',','.');
+        tableCaption.innerHTML = this.translate('MARKCAP')+ " (" + n.substr(0,5)+")"+": € " + this.formatMoney(marketCapMyWallet,0,',','.');
         wrapper.appendChild(tableCaption);
         return wrapper
     },
@@ -338,12 +339,14 @@ Module.register('MMM-crypto-portfolio', {
 
         // add the currency string
         apiResult['price'] = price.toLocaleString(config.language, { style: 'currency', currency: this.config.conversion })
+        apiResult['clean_price']=unroundedPrice;
         if (rightCurrencyFormat != 'usd' && this.config.showUSD) {
             // rounding the priceUSD
             var unroundedPriceUSD = apiResult['price_usd']
             var digitsBeforeDecimalPointUSD = Math.floor(unroundedPriceUSD).toString().length
             var requiredDigitsAfterDecimalPointUSD = Math.max(this.config.significantDigits - digitsBeforeDecimalPointUSD, 2)
             var priceUSD = this.roundNumber(unroundedPriceUSD, requiredDigitsAfterDecimalPointUSD)
+            apiResult['clean_price_usd'] = unroundedPriceUSD;
             apiResult['price'] += ' / ' + priceUSD.toLocaleString(config.language, { style: 'currency', currency: 'USD' })
         }
 
@@ -382,22 +385,21 @@ Module.register('MMM-crypto-portfolio', {
 
         var table = document.createElement('table')
         table.className = 'medium MMM-crypto-portfolio-icon'
-
+        var myTotalAsset = 0;
+        
         for (var j = 0; j < apiResult.length; j++) {
 
             var tr = document.createElement('tr')
             tr.className = 'icon-row'
 
-            var logoWrapper = document.createElement('td')
-            logoWrapper.className = 'icon-field'
-//logoWrapper.colSpan=5;            
+            var tdLogoWrapper = document.createElement('td')
+            tdLogoWrapper.className = 'icon-field'
             if (this.imageExists(apiResult[j].id)) {
                 var logo = new Image()
-
                 logo.src = '/MMM-crypto-portfolio/' + this.folder + apiResult[j].id + '.png'
                 logo.style.maxWidth="50px";
                 logo.style.maxHeight="50px";
-                logoWrapper.appendChild(logo)
+                tdLogoWrapper.appendChild(logo)
             } else {
                 this.sendNotification('SHOW_ALERT', {
                     timer: 5000,
@@ -406,65 +408,75 @@ Module.register('MMM-crypto-portfolio', {
                         this.translate('IMAGE') + ' ' + apiResult[j].id + '.png ' + this.translate('NOTFOUND') + ' /MMM-crypto-portfolio/public/' + this.folder
                 })
             }
-            
-            cPrice= apiResult[j].price.replace("€", "");
-            cPrice= cPrice.replace(",",".");
+            var tdPriceWrapper = document.createElement('td');
+            //tdPriceWrapper.textAlign="right";
+            //tdPriceWrapper.style.fontSize = this.config.fontSize;
+            tdPriceWrapper.className='icon-col'
+            var valuesText='<table><tr style="line-height:10px;"><td class="pricedetail">' + this.translate('PRICE') + '</td><td class="pricedetail">'+apiResult[j].price.replace("EUR", "€")+"</td></tr>";
+            //cPrice= apiResult[j].price.replace("€", "");
+            //cPrice= cPrice.replace(",",".");
+            cPrice = apiResult[j]['price_' + this.config.conversion.toLowerCase()];
+            myTotalAsset += this.config.currency[j].portf * cPrice; 
             var myWallet=(this.config.currency[j].portf * cPrice).toFixed(2);
-            
-            
-            var priceWrapper = document.createElement('td')
-            var price = document.createElement('price')
-            price.style.fontSize = this.config.fontSize
-            price.innerHTML = this.config.currency[j].portf + ' @ ' + apiResult[j].price.replace("EUR", "€") + ' = € ' + myWallet;
-
-            priceWrapper.appendChild(price)
-
-            if (displayType == 'logoWithChanges') {
-                let changesWrapper = document.createElement('div')
-                var change_1h = document.createElement('change_1h')
-                change_1h.style.color = this.colorizeChange(apiResult[j].percent_change_1h)
-                change_1h.style.fontSize = 'medium'
-                change_1h.innerHTML = 'h: ' + apiResult[j].percent_change_1h + '%'
-                change_1h.style.marginRight = '12px'
-
-                var change_24h = document.createElement('change_24h')
-                change_24h.style.color = this.colorizeChange(apiResult[j].percent_change_24h)
-                change_24h.style.fontSize = 'medium'
-                change_24h.innerHTML = 'd: ' + apiResult[j].percent_change_24h + '%'
-                change_24h.style.marginRight = '12px'
-
-                var change_7d = document.createElement('change_7d')
-                change_7d.style.color = this.colorizeChange(apiResult[j].percent_change_7d)
-                change_7d.style.fontSize = 'medium'
-                change_7d.innerHTML = 'w: ' + apiResult[j].percent_change_7d + '%'
-
-                changesWrapper.appendChild(change_1h)
-                changesWrapper.appendChild(change_24h)
-                changesWrapper.appendChild(change_7d)
-                priceWrapper.appendChild(changesWrapper)
-            } else {
-                priceWrapper.className = 'price'
+            var portfolio = this.config.currency[j].portf;
+            var againstBTC = apiResult[j].price_btc;
+            if (this.config.showAssets){
+               valuesText += '<tr style="line-height:12px;"><td class="pricedetail">' + this.translate('ASSETS') + '</td><td class="pricedetail">€ ' + myWallet + "</td></tr>";
             }
-
-            tr.appendChild(logoWrapper)
-            tr.appendChild(priceWrapper)
-
+            if (this.config.showPortfolio){
+               valuesText += '<tr style="line-height:12px;"><td class="pricedetail">' + this.translate('PORTFOLIO') + '</td><td class="pricedetail">' + portfolio +"<td></tr>";
+            }
+            if (this.config.showAgainstBTC){
+               valuesText += '<tr style="line-height:12px;"><td class="pricedetail">Bitcoin</td><td class="pricedetail"><i class="fa fa-bitcoin"></i> ' + againstBTC +"<td></tr>";
+            }
+            if (displayType == 'logoWithChanges') {
+               var clr = this.colorizeChange(apiResult[j].percent_change_1h)
+               valuesText += '<tr style="line-height:12px;"><td class="pricedetail">' + this.translate('CHANGE') + ' '+this.translate('ONEHOUR') + '</td><td class="pricedetail clr'+clr+'">' + apiResult[j].percent_change_1h + '%<td></tr>';
+               clr = this.colorizeChange(apiResult[j].percent_change_24h)
+               valuesText += '<tr style="line-height:12px;"><td class="pricedetail">' + this.translate('CHANGE') + ' '+this.translate('ONEDAY') + '</td><td class="pricedetail clr'+clr+'">' + apiResult[j].percent_change_24h + '%<td></tr>';
+               clr = this.colorizeChange(apiResult[j].percent_change_7d)
+               valuesText += '<tr style="line-height:12px;"><td class="pricedetail">' + this.translate('CHANGE') + ' '+this.translate('ONEWEEK') + '</td><td class="pricedetail clr'+clr+'">' + apiResult[j].percent_change_7d + '%<td></tr>';
+            
+            }
+            valuesText+="</table>";
+            tdPriceWrapper.innerHTML = valuesText;
+            tdPriceWrapper.className='icon-row';
+            tr.appendChild(tdLogoWrapper);
+            tr.appendChild(tdPriceWrapper);
+            
             if (this.config.showGraphs) {
-                var graphWrapper = document.createElement('td')
-                
-                graphWrapper.className = 'graph'
+                var tdGraphWrapper = document.createElement('td')
+                tdGraphWrapper.className = 'graph'
                 if (this.sparklineIds[apiResult[j].id]) {
                     var graph = document.createElement('img')
                     graph.src = 'https://files.coinmarketcap.com/generated/sparklines/' + this.sparklineIds[apiResult[j].id] + '.png?cachePrevention=' + Math.random()
-                    console.log(graph.src)
+                    
                     graph.style.maxWidth="150px";
-                    graphWrapper.appendChild(graph)
+                    //graph.style.padding="0px";
+                    tdGraphWrapper.appendChild(graph)
                 }
-                tr.appendChild(graphWrapper)
+                tr.appendChild(tdGraphWrapper)
             }
+            table.appendChild(tr);
+            
+            
 
-            table.appendChild(tr)
+            
         }
+            var tr = document.createElement('tr');
+            var tdTotal = document.createElement('td');
+            tdTotal.className="pricedetail";            
+            tdTotal.innerHTML=this.translate("TOTALASSETS");
+            tr.appendChild(tdTotal);
+            var tdTotal = document.createElement('td');
+            tdTotal.className="pricedetail";            
+            tdTotal.innerHTML= '€ ' + myTotalAsset.toFixed(2);
+            tdTotal.style.textAlign="right";
+            tr.appendChild(tdTotal);
+            table.appendChild(tr);        
+        
+        
+        
         wrapper.appendChild(table)
 
         return wrapper
@@ -488,11 +500,11 @@ Module.register('MMM-crypto-portfolio', {
     colorizeChange: function(change) {
 
         if (change < 0) {
-            return 'Red'
+            return 'red'
         } else if (change > 0) {
-            return 'Green'
+            return 'green'
         } else {
-            return 'White'
+            return 'white'
         }
     },
 

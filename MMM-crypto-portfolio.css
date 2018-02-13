@@ -34,3 +34,29 @@
     padding-left: 10px;
     filter: invert(1) grayscale(100%) brightness(500%);
 }
+.icon-row{
+    margin:0px;
+    padding:0px;
+}
+table {
+    border-collapse: collapse;
+    
+}
+.icon-col {
+    margin:0px;
+    padding:0px 5px;
+    text-align: right;
+    font-size:small;
+}
+.pricedetail {
+    font-size: 14px;
+}
+.clrred{
+    color: red;
+}
+.clrgreen{
+    color: green;
+}
+.clrwhite{
+    color: white;
+}

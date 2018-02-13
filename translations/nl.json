@@ -10,5 +10,6 @@
   "ONEDAY": "1 dag",
   "ONEWEEK": "1 week",
   "ASSETS": "Bezit",
-  "PORTFOLIO":"Portfolio"
+  "PORTFOLIO":"Portfolio",
+  "TOTALASSETS":"Totaal bezit"
 }
