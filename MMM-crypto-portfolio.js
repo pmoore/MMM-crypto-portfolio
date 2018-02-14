@@ -260,15 +260,14 @@ Module.register('MMM-crypto-portfolio', {
             }
             // build the td for the data in the array fill table
             for (var j = 0; j < tdValues.length; j++) {
-                var tdWrapper = document.createElement('td')
                 let currValue = tdValues[j]
                 // If I am showing value then set color
+                clr='white';
+                // only show in percentage values
                 if (currValue.includes('%')) {
-                    tdWrapper.style.color = this.colorizeChange(currValue.slice(0,-1))
+                    clr = this.colorizeChange(currValue.slice(0,-1))
                 }
-                tdWrapper.style.textAlign=(j>0?"right":"left");
-                tdWrapper.innerHTML = currValue
-                trWrapper.appendChild(tdWrapper)
+                trWrapper.appendChild(this.setTd(currValue,'',(j>0?"right":"left"),clr  ));
             }
             wrapper.appendChild(trWrapper)
         }
@@ -277,17 +276,9 @@ Module.register('MMM-crypto-portfolio', {
             // add tr for totals 
             var trWrapper = document.createElement('tr')
             trWrapper.className = 'currency'
-            var tdWrapper = document.createElement('td')
-            tdWrapper.style.textAlign="left";
-            tdWrapper.innerHTML = this.translate('TOTAL');
-            tdWrapper.colSpan=(this.config.showAgainstBTC?3:2);
-            trWrapper.appendChild(tdWrapper)
+            trWrapper.appendChild(this.setTd(this.translate('TOTAL'),'','left','',(this.config.showAgainstBTC?3:2)));
             wrapper.appendChild(trWrapper)
-
-            var tdWrapper = document.createElement('td')
-            tdWrapper.style.textAlign="right";
-            tdWrapper.innerHTML = this.localCurrencyFormat(myTotalAsset);
-            trWrapper.appendChild(tdWrapper)
+            trWrapper.appendChild(this.setTd(this.localCurrencyFormat(myTotalAsset),'','right') );
             wrapper.appendChild(trWrapper)
         
         }
@@ -295,18 +286,11 @@ Module.register('MMM-crypto-portfolio', {
         var n = d.toLocaleTimeString();
         // add the total market cap of the selected coins on top of table
         var tableCaption = document.createElement('caption');
-        tableCaption.innerHTML = this.translate('MARKCAP')+ " (" + n.substr(0,5)+"): " + this.localCurrencyFormat(marketCapMyWallet)
-        wrapper.appendChild(tableCaption);
-        // only needed if show market cap true
-        if (this.config.showTotalMarketCap){
-           var trCap=document.createElement('tr');
-           var tdCap= document.createElement('td');
-           tdCap.colSpan ="4";
-           tdCap.id = 'market_cap';
-           tdCap.className = 'small thin';
-           trCap.appendChild(tdCap)
-           wrapper.appendChild(trCap);
+        tableCaption.id='market_cap';
+        if (!this.config.showTotalMarketCap){
+           tableCaption.innerHTML = this.translate('MARKCAP')+ " (" + n.substr(0,5)+"): " + this.localCurrencyFormat(marketCapMyWallet)
         }
+        wrapper.appendChild(tableCaption);
         return wrapper
     },
 
@@ -317,7 +301,7 @@ Module.register('MMM-crypto-portfolio', {
             this.getCap() 
 
         } else if (notification ==='MARKET_CAP_DATA'){
-            document.getElementById('market_cap').innerHTML="Total market cap: " + payload.total_market_cap_usd.toLocaleString('en-US', { style: 'currency', currency: 'USD' });
+            document.getElementById('market_cap').innerHTML=this.translate("TOTALGLOBALCAP")+": " + payload.total_market_cap_usd.toLocaleString('en-US', { style: 'currency', currency: 'USD' });
         }
         
     },
@@ -467,10 +451,9 @@ Module.register('MMM-crypto-portfolio', {
             }
             // close td[2] table amounts
             valuesText+="</table>";
-            tdPriceWrapper.innerHTML = valuesText;
-            tdPriceWrapper.className='icon-row';
+
             tr.appendChild(tdLogoWrapper);
-            tr.appendChild(tdPriceWrapper);
+            tr.appendChild(this.setTd(valuesText,'icon-row'));
             // td[3] graphics
             if (this.config.showGraphs) {
                 var tdGraphWrapper = document.createElement('td')
@@ -488,15 +471,8 @@ Module.register('MMM-crypto-portfolio', {
         // use the total value of the assets as set in config
         if (this.config.showAssets){
             var tr = document.createElement('tr');
-            var tdTotal = document.createElement('td');
-            tdTotal.className="pricedetail";            
-            tdTotal.innerHTML=this.translate("TOTALASSETS");
-            tr.appendChild(tdTotal);
-            var tdTotal = document.createElement('td');
-            tdTotal.className="pricedetail";            
-            tdTotal.innerHTML= this.localCurrencyFormat(myTotalAsset);
-            tdTotal.style.textAlign="right";
-            tr.appendChild(tdTotal);
+            tr.appendChild(this.setTd(this.translate("TOTALASSETS"),"pricedetail"));
+            tr.appendChild(this.setTd(this.localCurrencyFormat(myTotalAsset),"pricedetail","right"));
             table.appendChild(tr);        
         }
         wrapper.appendChild(table)
@@ -550,6 +526,20 @@ Module.register('MMM-crypto-portfolio', {
      */
     localCurrencyFormat: function (amount){
         return amount.toLocaleString(config.language, { style: 'currency', currency: this.config.conversion })
+    },
+    /*
+     *@ inHTML = innerHTML
+     *@ cName  = classname
+     *@ tAlign = textAlign
+     *@ clr    = color
+     */
+    setTd: function (inHTML,cName,tAlign,clr,cSpan){
+        var newTD = document.createElement('td');
+        newTD.style.textAlign=(tAlign?tAlign:'left');
+        if (cSpan){ newTD.colSpan=cSpan; }
+        newTD.style.color=(clr?clr:'white');
+        newTD.className=cName;            
+        newTD.innerHTML=inHTML;
+        return newTD;
     }
-
 })

@@ -11,5 +11,6 @@
   "ONEWEEK": "1 week",
   "ASSETS": "Bezit",
   "PORTFOLIO":"Portfolio",
-  "TOTALASSETS":"Totaal bezit"
+  "TOTALASSETS":"Totaal bezit",
+  "TOTALGLOBALCAP":"Totale markt kapitalisatie"
 }

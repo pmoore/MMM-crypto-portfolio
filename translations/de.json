@@ -11,5 +11,6 @@
   "ONEWEEK": "1W",
   "ASSETS": "Assets",
   "PORTFOLIO":"Portfolio",
-  "TOTALASSETS":"Total assets"
+  "TOTALASSETS":"Total assets",
+  "TOTALGLOBALCAP":"Total market cap"
 }

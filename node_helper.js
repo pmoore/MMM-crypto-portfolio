@@ -18,7 +18,7 @@ module.exports = NodeHelper.create({
     var self = this
     request({url: url, method: 'GET'}, function (error, response, body) {
       if (!error && response.statusCode == 200) {
-         console.log('COINS_DATA') 
+         //console.log('COINS_DATA') 
          self.sendSocketNotification('COINS_DATA', JSON.parse(body))
       }
     })
@@ -27,7 +27,7 @@ module.exports = NodeHelper.create({
     var self = this
     request({url: url, method: 'GET'}, function (error, response, body) {
       if (!error && response.statusCode == 200) {
-         console.log('MARKET_CAP_DATA') 
+         //console.log('MARKET_CAP_DATA') 
          self.sendSocketNotification('MARKET_CAP_DATA', JSON.parse(body))
       }
     })
