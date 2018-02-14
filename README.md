@@ -34,24 +34,25 @@ I have adapted it to show the portfolio and assets.
 Here is an example of an entry in `config.js`
 ```
 {
-	module: "MMM-cryptocurrency",
-	position: "top_right",
+	module: "MMM-crypto-portfolio",
+	position: "top_right",   // see mirror setting for options
 	config: {          // this is changed from Mateo`s Version
 		           // enter currency as pairs (name is the coin and portf how much you own)
-		currency: [{name: 'bitcoin',  portf:  1.0101010},
-		           {name: 'ripple',   portf: 21.688014},
-                           {name: 'litecoin', portf: 1.1382885},
-                           {name: 'ethereum', portf: 0}],
+		currency: [{name: 'bitcoin',  portf:  1.2345678},
+		           {name: 'ripple',   portf: 1.688014},
+                           {name: 'litecoin', portf: 0.382885},
+                           {name: 'ethereum', portf: 3.771212}],
 		conversion: 'EUR',
 		showPortfolio: true,    
                 showAssets: true,       
-		showAgainstBTC: true,     // only used in detail view
-		showTotalMarketCap: true, // only used in detail view
+		showAgainstBTC: true,      // only used in detail view
+		showTotalMarketCap: false, // only used in detail view
 		showUSD: false,
 		fontSize: 'small',
 		headers: ['change24h', 'change1h', 'change7d'],
-		displayType: 'detail',   //'logoWithChanges',
-		showGraphs: true
+		displayType: 'detail',   // or 'logoWithChanges',
+		showGraphs: true,
+		limit:100               // increase if your coin doesn't appear ther are more then 1000 
 	}
 }
 ```
