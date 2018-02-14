@@ -428,7 +428,7 @@ Module.register('MMM-crypto-portfolio', {
             var tdPriceWrapper = document.createElement('td');
             // ts table amount
             tdPriceWrapper.className='icon-col'
-            var valuesText='<table><tr style="line-height:10px;"><td class="pricedetail">' + this.translate('PRICE') + '</td><td class="pricedetail">' + this.localCurrencyFormat(apiResult[j].price) + "</td></tr>";
+            var valuesText='<table><tr style="line-height:10px;"><td class="pricedetail tal">' + this.translate('PRICE') + '</td><td class="pricedetail tar">' + this.localCurrencyFormat(apiResult[j].price) + "</td></tr>";
             // there is no clean_price conversion here so use the price_ + conversion
             cPrice = apiResult[j]['price_' + this.config.conversion.toLowerCase()];
             // calculatie totals
