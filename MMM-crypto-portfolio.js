@@ -1,3 +1,9 @@
+/* Magic Mirror
+ * Module: MagicMirror-Crypto-Portfolio
+ *
+ * By SpoturDeal https://github.com/spoturdeal
+ * MIT Licensed.
+ */
 Module.register('MMM-crypto-portfolio', {
     result: {},
     defaults: {
@@ -432,21 +438,21 @@ Module.register('MMM-crypto-portfolio', {
             var againstBTC = apiResult[j].price_btc;
             //fill the table with the amounts
             if (this.config.showAssets){
-               valuesText += '<tr style="line-height:12px;"><td class="pricedetail">' + this.translate('ASSETS') + '</td><td class="pricedetail">' + this.localCurrencyFormat(myWallet) + "</td></tr>";
+               valuesText += '<tr style="line-height:12px;"><td class="pricedetail tal">' + this.translate('ASSETS') + '</td><td class="pricedetail tar">' + this.localCurrencyFormat(myWallet) + "</td></tr>";
             }
             if (this.config.showPortfolio){
-               valuesText += '<tr style="line-height:12px;"><td class="pricedetail">' + this.translate('PORTFOLIO') + '</td><td class="pricedetail">' + portfolio +"<td></tr>";
+               valuesText += '<tr style="line-height:12px;"><td class="pricedetail tal">' + this.translate('PORTFOLIO') + '</td><td class="pricedetail tar">' + portfolio +"<td></tr>";
             }
             if (this.config.showAgainstBTC){
-               valuesText += '<tr style="line-height:12px;"><td class="pricedetail">Bitcoin</td><td class="pricedetail"><i class="fa fa-bitcoin"></i> ' + againstBTC +"<td></tr>";
+               valuesText += '<tr style="line-height:12px;"><td class="pricedetail tal">Bitcoin</td><td class="pricedetail"><i class="fa fa-bitcoin tar"></i> ' + againstBTC +"<td></tr>";
             }
             if (displayType == 'logoWithChanges') {
                var clr = this.colorizeChange(apiResult[j].percent_change_1h)
-               valuesText += '<tr style="line-height:12px;"><td class="pricedetail">' + this.translate('CHANGE') + ' '+this.translate('ONEHOUR') + '</td><td class="pricedetail clr'+clr+'">' + apiResult[j].percent_change_1h + '%<td></tr>';
+               valuesText += '<tr style="line-height:12px;"><td class="pricedetail tal">' + this.translate('CHANGE') + ' '+this.translate('ONEHOUR') + '</td><td class="pricedetail tar clr'+clr+'">' + apiResult[j].percent_change_1h + '%<td></tr>';
                clr = this.colorizeChange(apiResult[j].percent_change_24h)
-               valuesText += '<tr style="line-height:12px;"><td class="pricedetail">' + this.translate('CHANGE') + ' '+this.translate('ONEDAY') + '</td><td class="pricedetail clr'+clr+'">' + apiResult[j].percent_change_24h + '%<td></tr>';
+               valuesText += '<tr style="line-height:12px;"><td class="pricedetail tal">' + this.translate('CHANGE') + ' '+this.translate('ONEDAY') + '</td><td class="pricedetail tar clr'+clr+'">' + apiResult[j].percent_change_24h + '%<td></tr>';
                clr = this.colorizeChange(apiResult[j].percent_change_7d)
-               valuesText += '<tr style="line-height:12px;"><td class="pricedetail">' + this.translate('CHANGE') + ' '+this.translate('ONEWEEK') + '</td><td class="pricedetail clr'+clr+'">' + apiResult[j].percent_change_7d + '%<td></tr>';
+               valuesText += '<tr style="line-height:12px;"><td class="pricedetail tal">' + this.translate('CHANGE') + ' '+this.translate('ONEWEEK') + '</td><td class="pricedetail tar clr'+clr+'">' + apiResult[j].percent_change_7d + '%<td></tr>';
             
             }
             // close td[2] table amounts
