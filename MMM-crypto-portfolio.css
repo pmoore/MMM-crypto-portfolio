@@ -50,6 +50,7 @@ table {
 }
 .pricedetail {
     font-size: 14px;
+    text-align: right;
 }
 .clrred{
     color: red;
