@@ -394,7 +394,11 @@ Module.register('MMM-crypto-portfolio', {
         // make header
         var header = document.createElement('header')
         header.className = 'module-header'
+        header.id = 'market_cap'
         header.innerHTML = this.config.logoHeaderText
+       
+       
+       
         //only add header if there is a logoHeaderText
         if (this.config.logoHeaderText !== '') {
             wrapper.appendChild(header)
@@ -463,11 +467,14 @@ Module.register('MMM-crypto-portfolio', {
             // td[3] graphics
             if (this.config.showGraphs) {
                 var tdGraphWrapper = document.createElement('td')
-                tdGraphWrapper.className = 'graph'
+                tdGraphWrapper.className = 'graph';
+                tdGraphWrapper.style.padding = "0px";
                 if (this.sparklineIds[apiResult[j].id]) {
                     var graph = document.createElement('img')
                     graph.src = 'https://files.coinmarketcap.com/generated/sparklines/' + this.sparklineIds[apiResult[j].id] + '.png?cachePrevention=' + Math.random()
-                    graph.style.maxWidth="150px";
+                    graph.style.maxWidth = "150px";
+                    graph.style.margin = "0px";
+                    graph.style.padding = "0px";
                     tdGraphWrapper.appendChild(graph)
                 }
                 tr.appendChild(tdGraphWrapper)
