@@ -48,7 +48,7 @@ Module.register('MMM-crypto-portfolio', {
         tron: 1958,
         qtum: 1684,
         omisego: 1808,
-        airswap: 2058,  
+        airswap: 2058,
         aelf: 2299,
         aeternity: 1700,
         aion: 2062,
@@ -254,7 +254,7 @@ Module.register('MMM-crypto-portfolio', {
             if (this.config.showPortfolio){
                 tdValues.push(''+this.config.currency[i].portf )
             }
-            
+
             if (this.config.headers.indexOf('change1h') > -1) {
                 tdValues.push(currentCurrency.percent_change_1h + '%')
             }
@@ -279,14 +279,14 @@ Module.register('MMM-crypto-portfolio', {
         }
         // if show Assets is true in config it makes sense to show the total
         if (this.config.showAssets){
-            // add tr for totals 
+            // add tr for totals
             var trWrapper = document.createElement('tr')
             trWrapper.className = 'currency'
             trWrapper.appendChild(this.setTd(this.translate('TOTAL'),'','left','',(this.config.showAgainstBTC?3:2)));
             wrapper.appendChild(trWrapper)
             trWrapper.appendChild(this.setTd(this.localCurrencyFormat(myTotalAsset),'','right') );
             wrapper.appendChild(trWrapper)
-        
+
         }
         var d = new Date();
         var n = d.toLocaleTimeString();
@@ -304,12 +304,12 @@ Module.register('MMM-crypto-portfolio', {
         if (notification === 'COINS_DATA') {
             this.result = this.getWantedCurrencies(this.config.currency, payload)
             this.updateDom()
-            this.getCap() 
+            this.getCap()
 
         } else if (notification ==='MARKET_CAP_DATA'){
             document.getElementById('market_cap').innerHTML=this.translate("TOTALGLOBALCAP")+": " + payload.total_market_cap_usd.toLocaleString('en-US', { style: 'currency', currency: 'USD' });
         }
-        
+
     },
     /**
      * Returns configured currencies
@@ -324,7 +324,7 @@ Module.register('MMM-crypto-portfolio', {
             for (var j = 0; j < apiResult.length; j++) {
                 var userCurrency = chosenCurrencies[i]
                 var remoteCurrency = apiResult[j]
-                
+
                 if (userCurrency.name == remoteCurrency.id) {
                     remoteCurrency = this.formatPrice(remoteCurrency)
                     filteredCurrencies.push(remoteCurrency)
@@ -396,9 +396,9 @@ Module.register('MMM-crypto-portfolio', {
         header.className = 'module-header'
         header.id = 'market_cap'
         header.innerHTML = this.config.logoHeaderText
-       
-       
-       
+
+
+
         //only add header if there is a logoHeaderText
         if (this.config.logoHeaderText !== '') {
             wrapper.appendChild(header)
@@ -409,7 +409,7 @@ Module.register('MMM-crypto-portfolio', {
         var myTotalAsset = 0;
         // use the selected coins
         for (var j = 0; j < apiResult.length; j++) {
-            //make row for table the table top row consists of td[1] icon, td[2] amounts in table, td[3]Sprkline graphic 
+            //make row for table the table top row consists of td[1] icon, td[2] amounts in table, td[3]Sprkline graphic
             var tr = document.createElement('tr')
             tr.className = 'icon-row'
             // td icon
@@ -436,7 +436,7 @@ Module.register('MMM-crypto-portfolio', {
             // there is no clean_price conversion here so use the price_ + conversion
             cPrice = apiResult[j]['price_' + this.config.conversion.toLowerCase()];
             // calculatie totals
-            myTotalAsset += this.config.currency[j].portf * cPrice; 
+            myTotalAsset += this.config.currency[j].portf * cPrice;
             var myWallet=(this.config.currency[j].portf * cPrice);
             var portfolio = this.config.currency[j].portf;
             var againstBTC = apiResult[j].price_btc;
@@ -457,7 +457,7 @@ Module.register('MMM-crypto-portfolio', {
                valuesText += '<tr style="line-height:12px;"><td class="pricedetail tal">' + this.translate('CHANGE') + ' '+this.translate('ONEDAY') + '</td><td class="pricedetail tar clr'+clr+'">' + apiResult[j].percent_change_24h + '%<td></tr>';
                clr = this.colorizeChange(apiResult[j].percent_change_7d)
                valuesText += '<tr style="line-height:12px;"><td class="pricedetail tal">' + this.translate('CHANGE') + ' '+this.translate('ONEWEEK') + '</td><td class="pricedetail tar clr'+clr+'">' + apiResult[j].percent_change_7d + '%<td></tr>';
-            
+
             }
             // close td[2] table amounts
             valuesText+="</table>";
@@ -467,12 +467,14 @@ Module.register('MMM-crypto-portfolio', {
             // td[3] graphics
             if (this.config.showGraphs) {
                 var tdGraphWrapper = document.createElement('td')
-                tdGraphWrapper.className = 'graph';
+                tdGraphWrapper.className = 'graph-yellow';
                 tdGraphWrapper.style.padding = "0px";
                 if (this.sparklineIds[apiResult[j].id]) {
                     var graph = document.createElement('img')
                     graph.src = 'https://files.coinmarketcap.com/generated/sparklines/' + this.sparklineIds[apiResult[j].id] + '.png?cachePrevention=' + Math.random()
-                    graph.style.maxWidth = "150px";
+                    graph.style.maxWidth = "164px";
+                    graph.style.maxHeight = "48";
+                    graph.color = 'yellow';
                     graph.style.margin = "0px";
                     graph.style.padding = "0px";
                     tdGraphWrapper.appendChild(graph)
@@ -486,7 +488,7 @@ Module.register('MMM-crypto-portfolio', {
             var tr = document.createElement('tr');
             tr.appendChild(this.setTd(this.translate("TOTALASSETS"),"pricedetail"));
             tr.appendChild(this.setTd(this.localCurrencyFormat(myTotalAsset),"pricedetail","right"));
-            table.appendChild(tr);        
+            table.appendChild(tr);
         }
         wrapper.appendChild(table)
         return wrapper
@@ -526,11 +528,11 @@ Module.register('MMM-crypto-portfolio', {
         }
     },
     formatMoney: function(n,c, d, t){
-        c = isNaN(c = Math.abs(c)) ? 2 : c, 
-        d = d == undefined ? "." : d, 
-        t = t == undefined ? "," : t, 
-        s = n < 0 ? "-" : "", 
-        i = String(parseInt(n = Math.abs(Number(n) || 0).toFixed(c))), 
+        c = isNaN(c = Math.abs(c)) ? 2 : c,
+        d = d == undefined ? "." : d,
+        t = t == undefined ? "," : t,
+        s = n < 0 ? "-" : "",
+        i = String(parseInt(n = Math.abs(Number(n) || 0).toFixed(c))),
         j = (j = i.length) > 3 ? j % 3 : 0;
         return s + (j ? i.substr(0, j) + t : "") + i.substr(j).replace(/(\d{3})(?=\d)/g, "$1" + t) + (c ? d + Math.abs(n - i).toFixed(c).slice(2) : "");
     },
@@ -551,7 +553,7 @@ Module.register('MMM-crypto-portfolio', {
         newTD.style.textAlign=(tAlign?tAlign:'left');
         if (cSpan){ newTD.colSpan=cSpan; }
         newTD.style.color=(clr?clr:'white');
-        newTD.className=cName;            
+        newTD.className=cName;
         newTD.innerHTML=inHTML;
         return newTD;
     }

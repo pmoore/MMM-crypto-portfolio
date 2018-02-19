@@ -34,6 +34,9 @@
     padding-left: 10px;
     filter: invert(1) grayscale(100%) brightness(500%);
 }
+.MMM-crypto-portfolio-icon > tr >td.graph-yellow > img {
+    padding-left: 10px;
+}
 .icon-row{
     margin:0px;
     padding:0px;
