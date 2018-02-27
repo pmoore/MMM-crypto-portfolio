@@ -6,6 +6,10 @@
     padding-bottom: 8px;
 }
 
+.MMM-crypto-portfolio > tr.total-assets > td {
+    padding-top: 10px;
+}
+
 .MMM-crypto-portfolio > tr > td, .MMM-crypto-portfolio > tr > th {
     padding-left: 4px;
     padding-bottom: 5px;

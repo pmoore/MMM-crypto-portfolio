@@ -6,6 +6,8 @@
  */
 Module.register('MMM-crypto-portfolio', {
     result: {},
+    resultJson: {},
+    initialSet: 0,
     defaults: {
         currency: [{name:'bitcoin',   portf: 1.2345678},
                    {name:'ripple',    portf: 1.688014},
@@ -151,7 +153,8 @@ Module.register('MMM-crypto-portfolio', {
     },
 
     start: function() {
-        this.getTicker()
+        //this.getTicker()
+        this.getAllTickers()
         this.scheduleUpdate()
     },
 
@@ -165,6 +168,20 @@ Module.register('MMM-crypto-portfolio', {
         var url = 'https://api.coinmarketcap.com/v1/ticker/?convert=' + conversion + '&limit=' + this.config.limit
         this.sendSocketNotification('READ_COINS', url)
     },
+
+    getSingleTicker: function(coinId) {
+        var conversion = this.config.conversion
+        var url = 'https://api.coinmarketcap.com/v1/ticker/' + coinId+ '?convert=' + conversion
+        this.sendSocketNotification('READ_COIN', url)
+    },
+
+	getAllTickers: function() {
+		for (i = 0; i < this.config.currency.length; i++) {
+           var curr = this.config.currency[i]
+          this.getSingleTicker(curr.name)
+        }
+	},    
+    
     getCap:  function() {
         if (this.config.showTotalMarketCap){
            var url  = 'https://api.coinmarketcap.com/v1/global/';
@@ -175,9 +192,10 @@ Module.register('MMM-crypto-portfolio', {
     scheduleUpdate: function() {
         var self = this
         // Refresh time should not be less than 5 minutes
-        var delay = 300000
+        //var delay = 300000
+        var delay = 60000
         setInterval(function() {
-            self.getTicker()
+            self.getAllTickers()
         }, delay)
     },
 
@@ -187,9 +205,10 @@ Module.register('MMM-crypto-portfolio', {
             return this.buildIconView(this.result, this.config.displayType)
         }
         var data = this.result
+        var dataJson = this.resultJson
         // set the table wrapper where the data is build
         var wrapper = document.createElement('table')
-        wrapper.className = 'small MMM-crypto-portfolio'
+        wrapper.className = this.config.fontSize + ' light MMM-crypto-portfolio'
         // set tr for header
         var tableHeader = document.createElement('tr')
         tableHeader.className = 'header-row'
@@ -223,10 +242,13 @@ Module.register('MMM-crypto-portfolio', {
         // Set the total counter to 0
         var marketCapMyWallet = 0;
         var myTotalAsset = 0;
-        for (i = 0; i < data.length; i++) {
-            var currentCurrency = data[i]
-            var trWrapper = document.createElement('tr')
-            trWrapper.className = 'currency'
+
+        //for (i = 0; i < data.length; i++) {
+        //    var currentCurrency = data[i]        
+        var rows = []
+        for (var coinId in dataJson) {
+        		var currentCurrency = dataJson[coinId]
+        		var currentConfigCurrency = this.config.currency.find(function(obj) { return obj.name === coinId })
             var name
             if (this.config.displayLongNames) {
                 name = currentCurrency.name
@@ -235,10 +257,12 @@ Module.register('MMM-crypto-portfolio', {
             }
             // calc tot marketcap of the wallet
             marketCapMyWallet += parseFloat(currentCurrency.market_cap_eur);
-            // calc the tottal value of all assets
-            myTotalAsset += currentCurrency.clean_price * this.config.currency[i].portf
+            
+				console.log("*** Calculating cost of " + name + ": " + currentCurrency.clean_price + " (" + currentConfigCurrency.portf + ") ***")            
+            // calc the total value of all assets
+            myTotalAsset += currentCurrency.clean_price * currentConfigCurrency.portf
             // calc the value of the wallet for one coin
-            var myWallet = (this.config.currency[i].portf * currentCurrency.clean_price );
+            var myWallet = (currentConfigCurrency.portf * currentCurrency.clean_price );
             // build array with values needed in table
             var tdValues = [
                 name,
@@ -252,7 +276,7 @@ Module.register('MMM-crypto-portfolio', {
                 tdValues.push(this.localCurrencyFormat(myWallet));
             }
             if (this.config.showPortfolio){
-                tdValues.push(''+this.config.currency[i].portf )
+                tdValues.push(''+currentConfigCurrency.portf )
             }
 
             if (this.config.headers.indexOf('change1h') > -1) {
@@ -264,6 +288,36 @@ Module.register('MMM-crypto-portfolio', {
             if (this.config.headers.indexOf('change7d') > -1) {
                 tdValues.push(currentCurrency.percent_change_7d + '%')
             }
+            
+            // this value is for sorting
+            if (this.config.sort === 'change24h') {
+					tdValues.unshift(currentCurrency.percent_change_24h)
+            } else if (this.config.sort === 'price') {
+            	tdValues.unshift(currentCurrency.clean_price)
+            } else if (this.config.sort === 'portf') {
+            	tdValues.unshift(currentConfigCurrency.portf)
+            } else {
+            	var pos = this.config.currency.map(function(curr) { return curr.name }).indexOf(coinId)
+            	tdValues.unshift(pos * -1)
+            }
+				//console.log(tdValues)
+            rows.push(tdValues)           
+        }
+        //console.log(rows)
+		
+  		  rows.sort(function(a,b) {
+  		  	   var sortA = a[0]
+  		  	   var sortB = b[0]
+  		  	   return sortB - sortA;
+		  })        
+        
+		  for(var i = 0; i < rows.length; i++) {
+		     	var trWrapper = document.createElement('tr')
+            trWrapper.className = 'currency'
+
+				var tdValues = rows[i]
+				console.log(tdValues)
+				tdValues.shift()        				    
             // build the td for the data in the array fill table
             for (var j = 0; j < tdValues.length; j++) {
                 let currValue = tdValues[j]
@@ -273,15 +327,17 @@ Module.register('MMM-crypto-portfolio', {
                 if (currValue.includes('%')) {
                     clr = this.colorizeChange(currValue.slice(0,-1))
                 }
+                
                 trWrapper.appendChild(this.setTd(currValue,'',(j>0?"right":"left"),clr  ));
             }
             wrapper.appendChild(trWrapper)
-        }
+		  }        
+        
         // if show Assets is true in config it makes sense to show the total
         if (this.config.showAssets){
             // add tr for totals
             var trWrapper = document.createElement('tr')
-            trWrapper.className = 'currency'
+            trWrapper.className = 'currency total-assets'
             trWrapper.appendChild(this.setTd(this.translate('TOTAL'),'','left','',(this.config.showAgainstBTC?3:2)));
             wrapper.appendChild(trWrapper)
             trWrapper.appendChild(this.setTd(this.localCurrencyFormat(myTotalAsset),'','right') );
@@ -293,7 +349,7 @@ Module.register('MMM-crypto-portfolio', {
         // add the total market cap of the selected coins on top of table
         var tableCaption = document.createElement('caption');
         tableCaption.id='market_cap';
-        if (!this.config.showTotalMarketCap){
+        if (this.config.showTotalMarketCap){
            tableCaption.innerHTML = this.translate('MARKCAP')+ " (" + n.substr(0,5)+"): " + this.localCurrencyFormat(marketCapMyWallet)
         }
         wrapper.appendChild(tableCaption);
@@ -305,7 +361,14 @@ Module.register('MMM-crypto-portfolio', {
             this.result = this.getWantedCurrencies(this.config.currency, payload)
             this.updateDom()
             this.getCap()
-
+		  } else if (notification === 'COIN_DATA') {
+		  		this.updateCurrencyJson(payload)
+		  		this.initialSet++
+		  		if (this.initialSet == this.config.currency.length) {
+		  			console.log("*** ALL DONE FETCHING, UPDATING DOM ***")
+		  			this.updateDom()
+		  			this.getCap()
+		  		}
         } else if (notification ==='MARKET_CAP_DATA'){
             document.getElementById('market_cap').innerHTML=this.translate("TOTALGLOBALCAP")+": " + payload.total_market_cap_usd.toLocaleString('en-US', { style: 'currency', currency: 'USD' });
         }
@@ -332,6 +395,18 @@ Module.register('MMM-crypto-portfolio', {
             }
         }
         return filteredCurrencies
+    },
+    
+    
+    /**
+     * Updates resultJson with new apiResult
+     *
+     * @param apiResult
+     */
+    updateCurrencyJson: function(apiResult) {
+		  var remoteCurrency = apiResult[0]
+		  var formattedCurrency = this.formatPrice(remoteCurrency)		  
+		  this.resultJson[remoteCurrency.id] = formattedCurrency
     },
 
     /**

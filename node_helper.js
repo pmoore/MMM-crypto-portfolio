@@ -9,6 +9,8 @@ module.exports = NodeHelper.create({
   socketNotificationReceived: function (notification, payload) {
     if (notification === 'READ_COINS') {
       this.getTickers(payload)
+    } else if (notification === 'READ_COIN'){
+    	this.getTicker(payload)
     } else if (notification === 'READ_MARKET_CAP'){
       this.getCaps(payload)  
     }
@@ -23,6 +25,16 @@ module.exports = NodeHelper.create({
       }
     })
   },
+
+  getTicker: function (url) {
+    var self = this
+    request({url: url, method: 'GET'}, function (error, response, body) {
+      if (!error && response.statusCode == 200) {
+         self.sendSocketNotification('COIN_DATA', JSON.parse(body))
+      }
+    })
+  },
+  
   getCaps: function (url) {
     var self = this
     request({url: url, method: 'GET'}, function (error, response, body) {
